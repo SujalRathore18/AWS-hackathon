@@ -1,6 +1,6 @@
-# HeatShield AI
+# Climate Compass
 
-HeatShield AI explains heat risk for students and outdoor workers in Indore. A user chooses an activity and outdoor duration, and receives a risk level, practical actions, and a suggested safe-time budget.
+Climate Compass is a human-friendly heat intelligence dashboard for students, commuters, outdoor workers, and sports participants. Its HeatShield safety check turns weather, activity, and outdoor duration into a clear risk level, practical actions, and a suggested safe-time budget.
 
 ## Fast local demo
 
@@ -10,7 +10,7 @@ Run the live local demo (it fetches current weather from Open-Meteo):
 python local_server.py
 ```
 
-Open http://localhost:8080. Select different activities and durations. Stop the server with `Ctrl+C`.
+Open http://localhost:8080. Explore the dashboard, then select **Open heat safety check** and try different activities and durations. Stop the server with `Ctrl+C`.
 
 ## AWS implementation
 
@@ -35,7 +35,7 @@ src/risk.py            Shared explainable risk engine
 src/fetch_weather.py   Scheduled Lambda weather ingestion
 src/get_risk.py        API Gateway Lambda risk endpoint
 local_server.py        Live local demo using the same risk engine
-frontend/index.html    Mobile-friendly UI
+frontend/index.html    Climate Compass dashboard and HeatShield safety check
 template.yaml          AWS SAM infrastructure
 tests/                 Automated tests
 ```

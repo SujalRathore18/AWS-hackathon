@@ -1,8 +1,8 @@
-# HeatShield AI - Hackathon Submission
+# Climate Compass - Hackathon Submission
 
 ## One-line summary
 
-HeatShield AI turns Indore weather into an explainable outdoor-safety decision for students, commuters, and outdoor workers.
+Climate Compass presents global heat patterns and includes a HeatShield safety check that turns Indore weather into an explainable outdoor-safety decision for students, commuters, and outdoor workers.
 
 ## Environmental problem and beneficiaries
 
@@ -86,16 +86,16 @@ sam build --build-dir ".aws-sam\final-build"
 
 ### 0:30-1:20 - Working application
 
-Open the app at http://localhost:8080.
+Open the app at http://localhost:8080 or use the public dashboard at https://sujalrathore18.github.io/AWS-hackathon/.
 
-1. Select **Commute**, 60 minutes, and click **Check my risk**.
-2. Select **Outdoor work**, 180 minutes, and click again.
-3. Select **Sports** and compare the result.
-4. Enable **I am more heat-sensitive**.
+1. Select **Open heat safety check**.
+2. Select **Commute**, 60 minutes, and click **Check my risk**.
+3. Select **Outdoor work**, 180 minutes, and click again.
+4. Select **Sports** and compare the result.
 
 Say:
 
-“The app explains why the level changed, gives practical actions, estimates a safe-time budget, and identifies better hours. The user gets a decision, not just a weather number.”
+“The dashboard makes the climate context easy to scan, then the connected safety check explains why the level changed, gives practical actions, estimates a safe-time budget, and identifies better hours. The user gets a decision, not just a weather number.”
 
 ### 1:20-1:50 - Safety and transparency
 
@@ -107,7 +107,7 @@ Say:
 
 ### 1:50-2:30 - AWS implementation
 
-Open `template.yaml` and show the Lambda, DynamoDB, API Gateway, EventBridge, CloudWatch, and X-Ray resources.
+Open `template.yaml` and show the Lambda, DynamoDB, API Gateway, EventBridge, CloudWatch, and X-Ray resources. On GitHub Pages, the safety check uses a clearly labeled representative demo reading because static hosting cannot provide the `/risk` API.
 
 Say:
 
@@ -125,7 +125,7 @@ SAM build succeeded
 
 ### 2:50-3:00 - Honest deployment note
 
-“This account is managed by an AWS Organization whose Service Control Policy blocks CloudFormation change sets. The application and SAM package are complete; an organization administrator can deploy the same template in an approved account.”
+“This account is managed by an AWS Organization whose Service Control Policy blocks CloudFormation change sets. The application and SAM package are complete; an organization administrator can deploy the same template in an approved account. The public GitHub Pages dashboard is live for review.”
 
 ## Source code
 
