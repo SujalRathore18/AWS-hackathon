@@ -35,6 +35,51 @@
   </div>
   <div id="output" aria-live="polite"></div>
   <script>
+    function renderResult(data, demoMode = false) {
+      const output = document.getElementById("output");
+      output.innerHTML = `<div class="card ${data.level}"><div class="level">${data.level} risk</div>
+        <p>${data.why.join(" ")}</p><ul>${data.actions.map(action => `<li>${action}</li>`).join("")}</ul>
+        <p>Suggested safe outdoor time: <b>about ${data.safe_minutes} minutes</b>.</p></div>
+        <div class="card"><b>Now:</b> ${data.temp_c}°C, ${data.humidity}% humidity,
+        feels like ${data.apparent_c}°C. <b>Best hours:</b> ${data.best_hours.join(", ") || "none"}.</div>
+        <div class="card"><b>Official warning:</b> ${data.official_alert}</div>
+        <small>${demoMode ? "GitHub Pages demo mode. " : ""}Source: ${data.source}. Updated ${data.updated}. ${data.disclaimer}</small>`;
+    }
+    function demoData(activity, minutes, vulnerable) {
+      const offsets = { commute: 1, walking: 2, outdoor_work: 5, sports: 6 };
+      const factors = { commute: 1, walking: 0.8, outdoor_work: 0.5, sports: 0.4 };
+      const levels = ["Low", "Moderate", "High", "Extreme"];
+      const actions = [
+        ["Carry water and sip regularly.", "Normal outdoor plans are fine."],
+        ["Drink water every 20-30 minutes.", "Take breaks in shade.", "Wear light, loose clothes and a cap."],
+        ["Move outdoor tasks to early morning or evening.", "Carry water and rest in shade every 30 minutes."],
+        ["Avoid outdoor activity if you can.", "Stop if dizzy, sick or confused and seek help."]
+      ];
+      const temp = 38;
+      const humidity = 55;
+      const heatIndex = 52.1;
+      let adjusted = heatIndex + offsets[activity];
+      if (minutes >= 240) adjusted += 2; else if (minutes >= 120) adjusted += 1;
+      if (new Date().getHours() >= 11 && new Date().getHours() < 16) adjusted += 1;
+      if (vulnerable) adjusted += 2;
+      const index = adjusted >= 51 ? 3 : adjusted >= 39 ? 2 : adjusted >= 32 ? 1 : 0;
+      return {
+        level: levels[index],
+        why: [`Heat index is ${heatIndex}C (${temp}C at ${humidity}% humidity).`,
+          `${activity.replace("_", " ").replace(/\b\w/g, letter => letter.toUpperCase())} adds +${offsets[activity]}C of effort.`,
+          "GitHub Pages is showing a deterministic demo reading."],
+        actions: actions[index],
+        safe_minutes: Math.floor([240, 120, 45, 15][index] * factors[activity]),
+        temp_c: temp,
+        humidity,
+        apparent_c: 42,
+        best_hours: ["07:00", "08:00"],
+        official_alert: "Always check IMD (mausam.imd.gov.in) for official warnings.",
+        source: "HeatShield risk model",
+        updated: new Date().toISOString(),
+        disclaimer: "Awareness tool only. Not medical advice and not a substitute for official IMD warnings."
+      };
+    }
     async function render() {
       const activity = document.getElementById("activity").value;
       const minutes = Math.max(5, Math.min(600, Number(document.getElementById("minutes").value) || 60));
@@ -45,16 +90,9 @@
         const response = await fetch(`/risk?activity=${encodeURIComponent(activity)}&minutes=${minutes}&vulnerable=${vulnerable}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Request failed");
-        output.innerHTML = `<div class="card ${data.level}"><div class="level">${data.level} risk</div>
-          <p>${data.why.join(" ")}</p><ul>${data.actions.map(action => `<li>${action}</li>`).join("")}</ul>
-          <p>Suggested safe outdoor time: <b>about ${data.safe_minutes} minutes</b>.</p></div>
-          <div class="card"><b>Now:</b> ${data.temp_c}°C, ${data.humidity}% humidity,
-          feels like ${data.apparent_c}°C. <b>Best hours:</b> ${data.best_hours.join(", ") || "none"}.</div>
-          <div class="card"><b>Official warning:</b> ${data.official_alert}</div>
-          <small>Source: ${data.source}. Updated ${data.updated}. ${data.disclaimer}</small>`;
+        renderResult(data);
       } catch (error) {
-        output.innerHTML = `<div class="card"><b>Could not load live weather.</b><p>${error.message}</p>
-          <small>Start the local server with <code>python local_server.py</code>.</small></div>`;
+        renderResult(demoData(activity, minutes, vulnerable === "1"), true);
       }
     }
     document.getElementById("check").addEventListener("click", render);
