@@ -4,6 +4,11 @@ LEVELS = ["Low", "Moderate", "High", "Extreme"]
 ACTIVITY_OFFSET = {"commute": 1, "walking": 2, "outdoor_work": 5, "sports": 6}
 ACTIVITY_FACTOR = {"commute": 1.0, "walking": 0.8, "outdoor_work": 0.5, "sports": 0.4}
 BASE_MINUTES = [240, 120, 45, 15]
+HEAT_INDEX_NOTE = (
+    "Heat index is an awareness estimate. The full Rothfusz approximation is "
+    "most appropriate around temperatures of at least 27C and relative humidity "
+    "of at least 40%; cooler or drier results use the simpler approximation."
+)
 ALERT_FLOOR = {"none": 0, "green": 0, "yellow": 1, "orange": 2, "red": 3}
 ACTIONS = {
     0: ["Carry water and sip regularly.", "Normal outdoor plans are fine."],
@@ -48,6 +53,16 @@ def level_for(effective_c):
 
 
 def assess(temp_c, rh, activity, minutes, hour, alert="none", vulnerable=False):
+    if not isinstance(temp_c, (int, float)) or not math.isfinite(temp_c):
+        raise ValueError("temperature must be a finite number")
+    if not isinstance(rh, (int, float)) or not 0 <= rh <= 100:
+        raise ValueError("humidity must be between 0 and 100")
+    if activity not in ACTIVITY_OFFSET:
+        raise ValueError("unsupported activity")
+    if not isinstance(minutes, int) or not 5 <= minutes <= 600:
+        raise ValueError("minutes must be between 5 and 600")
+    if not isinstance(hour, int) or not 0 <= hour <= 23:
+        raise ValueError("hour must be between 0 and 23")
     hi = heat_index_c(temp_c, rh)
     why = [f"Heat index is {hi}C ({temp_c}C at {rh}% humidity)."]
     extra = ACTIVITY_OFFSET.get(activity, 1)
@@ -69,8 +84,17 @@ def assess(temp_c, rh, activity, minutes, hour, alert="none", vulnerable=False):
     if floor > level:
         level = floor
         why.append(f"An official IMD {alert} alert raises the level to {LEVELS[level]}.")
-    safe = int(BASE_MINUTES[level] * ACTIVITY_FACTOR.get(activity, 1.0))
-    return {"level_index": level, "level": LEVELS[level], "heat_index_c": hi, "why": why, "actions": ACTIONS[level], "safe_minutes": safe}
+    planning_limit = int(BASE_MINUTES[level] * ACTIVITY_FACTOR[activity])
+    return {
+        "level_index": level,
+        "level": LEVELS[level],
+        "heat_index_c": hi,
+        "why": why,
+        "actions": ACTIONS[level],
+        "planning_limit_minutes": planning_limit,
+        "safe_minutes": planning_limit,
+        "model_note": HEAT_INDEX_NOTE,
+    }
 
 
 def best_windows(forecast, activity, minutes, alert="none", vulnerable=False):

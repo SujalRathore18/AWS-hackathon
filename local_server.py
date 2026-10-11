@@ -9,7 +9,7 @@ import os
 import sys
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -24,6 +24,7 @@ WEATHER_URL = (
     "&hourly=temperature_2m,relative_humidity_2m,apparent_temperature"
     "&forecast_days=2&timezone=Asia%2FKolkata"
 )
+IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def get_weather():
@@ -55,11 +56,13 @@ def get_weather():
 def make_response(query):
     activity = query.get("activity", ["commute"])[0]
     if activity not in risk.ACTIVITY_OFFSET:
-        activity = "commute"
+        raise ValueError("activity must be commute, walking, outdoor_work, or sports")
     try:
-        minutes = max(5, min(int(query.get("minutes", ["60"])[0]), 600))
+        minutes = int(query.get("minutes", ["60"])[0])
     except (TypeError, ValueError):
-        minutes = 60
+        raise ValueError("minutes must be a whole number from 5 to 600") from None
+    if not 5 <= minutes <= 600:
+        raise ValueError("minutes must be a whole number from 5 to 600")
     vulnerable = query.get("vulnerable", ["0"])[0] == "1"
     alert = os.environ.get("IMD_ALERT", "none").lower()
     weather = get_weather()
@@ -68,7 +71,7 @@ def make_response(query):
         weather["humidity"],
         activity,
         minutes,
-        datetime.now().hour,
+        datetime.now(IST).hour,
         alert,
         vulnerable,
     )
@@ -85,6 +88,7 @@ def make_response(query):
         "why": result["why"],
         "actions": result["actions"],
         "safe_minutes": result["safe_minutes"],
+        "planning_limit_minutes": result["planning_limit_minutes"],
         "temp_c": weather["temp_c"],
         "humidity": weather["humidity"],
         "apparent_c": weather["apparent_c"],
@@ -94,6 +98,8 @@ def make_response(query):
         "official_alert": official,
         "source": "Open-Meteo (weather) + HeatShield risk model",
         "updated": datetime.now(timezone.utc).isoformat(),
+        "data_state": "LIVE",
+        "model_note": result["model_note"],
         "disclaimer": "Awareness tool only. Not medical advice and not a substitute for official IMD warnings.",
     }
 
@@ -105,8 +111,11 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 body = json.dumps(make_response(urllib.parse.parse_qs(parsed.query))).encode()
                 self.send_response(200)
-            except Exception as exc:
-                body = json.dumps({"error": f"Unable to fetch weather: {exc}"}).encode()
+            except ValueError as exc:
+                body = json.dumps({"error": str(exc)}).encode()
+                self.send_response(400)
+            except Exception:
+                body = json.dumps({"error": "Live weather is unavailable. Try again shortly."}).encode()
                 self.send_response(502)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")

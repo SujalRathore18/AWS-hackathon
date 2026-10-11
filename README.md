@@ -1,6 +1,6 @@
 # Climate Compass
 
-Climate Compass is a human-friendly heat intelligence dashboard for students, commuters, outdoor workers, and sports participants. Its HeatShield safety check turns weather, activity, and outdoor duration into a clear risk level, practical actions, and a suggested safe-time budget.
+Climate Compass is a human-friendly heat intelligence dashboard for students, commuters, outdoor workers, and sports participants. Its HeatShield safety check turns weather, activity, and outdoor duration into a clear risk level, practical actions, and a conservative planning limit. The comparison globe, city cards, and chart are explicitly illustrative until a multi-city comparison API is connected.
 
 ## Fast local demo
 
@@ -10,7 +10,7 @@ Run the live local demo (it fetches current weather from Open-Meteo):
 python local_server.py
 ```
 
-Open http://localhost:8080. Explore the dashboard, then select **Open heat safety check** and try different activities and durations. Stop the server with `Ctrl+C`.
+Open http://localhost:8080. Explore the dashboard, then select **Open heat safety check** and try different activities and durations. The local server reports LIVE or ERROR instead of silently substituting sample data. Stop the server with `Ctrl+C`.
 
 ## AWS implementation
 
@@ -40,7 +40,7 @@ template.yaml          AWS SAM infrastructure
 tests/                 Automated tests
 ```
 
-Deployment may require an AWS Organization administrator to allow CloudFormation change sets. The current account has an explicit Service Control Policy deny, so the local demo is the working fallback.
+Deployment may require an AWS Organization administrator to allow CloudFormation change sets. The current account has an explicit Service Control Policy deny, so the local demo is the working fallback. GitHub Pages uses clearly labelled DEMO scenarios because static hosting cannot provide `/risk`.
 
 ## Limits
 

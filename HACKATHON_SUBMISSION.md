@@ -24,7 +24,7 @@ The user selects an activity and time outdoors. The application returns:
 - Low, Moderate, High, or Extreme risk
 - A plain-language explanation
 - Recommended protective actions
-- Suggested safe outdoor minutes
+- A conservative planning limit (not a guaranteed safe exposure time)
 - Best hours in the next 12 hours
 - Current weather source and update timestamp
 
@@ -91,11 +91,11 @@ Open the app at http://localhost:8080 or use the public dashboard at https://suj
 1. Select **Open heat safety check**.
 2. Select **Commute**, 60 minutes, and click **Check my risk**.
 3. Select **Outdoor work**, 180 minutes, and click again.
-4. Select **Sports** and compare the result.
+4. On GitHub Pages, switch between the labelled Cool, Moderate, High, and Extreme demo scenarios.
 
 Say:
 
-“The dashboard makes the climate context easy to scan, then the connected safety check explains why the level changed, gives practical actions, estimates a safe-time budget, and identifies better hours. The user gets a decision, not just a weather number.”
+“The dashboard makes the climate context easy to scan, then the connected safety check explains why the level changed, gives practical actions, and provides a conservative planning limit. The user gets a decision, not just a weather number.”
 
 ### 1:20-1:50 - Safety and transparency
 

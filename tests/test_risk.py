@@ -37,3 +37,20 @@ def test_best_windows_prefers_cooler_hours():
     ]
     _, best = risk.best_windows(forecast, "commute", 60)
     assert best == ["08:00"]
+
+
+def test_assessment_exposes_heuristic_limit_and_note():
+    result = risk.assess(35, 50, "walking", 60, 9)
+    assert result["planning_limit_minutes"] == result["safe_minutes"]
+    assert "awareness estimate" in result["model_note"]
+
+
+def test_assessment_rejects_invalid_inputs():
+    import pytest
+
+    with pytest.raises(ValueError):
+        risk.assess(35, 120, "walking", 60, 9)
+    with pytest.raises(ValueError):
+        risk.assess(35, 50, "unknown", 60, 9)
+    with pytest.raises(ValueError):
+        risk.assess(35, 50, "walking", 601, 9)
