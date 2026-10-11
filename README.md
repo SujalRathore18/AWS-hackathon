@@ -4,7 +4,13 @@ HeatShield AI explains heat risk for students and outdoor workers in Indore. A u
 
 ## Fast local demo
 
-Open `frontend/index.html` in a browser and select different activities and durations.
+Run the live local demo (it fetches current weather from Open-Meteo):
+
+```powershell
+python local_server.py
+```
+
+Open http://localhost:8080. Select different activities and durations. Stop the server with `Ctrl+C`.
 
 ## AWS implementation
 
@@ -20,6 +26,18 @@ Build and validate:
 sam validate --lint
 sam build
 python -m pytest tests -v
+```
+
+## Project structure
+
+```text
+src/risk.py            Shared explainable risk engine
+src/fetch_weather.py   Scheduled Lambda weather ingestion
+src/get_risk.py        API Gateway Lambda risk endpoint
+local_server.py        Live local demo using the same risk engine
+frontend/index.html    Mobile-friendly UI
+template.yaml          AWS SAM infrastructure
+tests/                 Automated tests
 ```
 
 Deployment may require an AWS Organization administrator to allow CloudFormation change sets. The current account has an explicit Service Control Policy deny, so the local demo is the working fallback.
