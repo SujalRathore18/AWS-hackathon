@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HeatShield AI - Indore</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #1f2937; background: #fff7ed; }
+    body { max-width: 620px; margin: auto; padding: 16px; }
+    .card { background: white; border: 3px solid #d1d5db; border-radius: 14px; padding: 16px; margin: 14px 0; }
+    .Low { border-color: #16a34a; } .Moderate { border-color: #eab308; }
+    .High { border-color: #ea580c; } .Extreme { border-color: #dc2626; }
+    label { display: block; margin: 14px 0; } select, input, button { font: inherit; padding: 9px; }
+    button { cursor: pointer; background: #111827; color: white; border: 0; border-radius: 8px; }
+    .level { font-size: 28px; font-weight: 700; } small { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>HeatShield AI</h1>
+  <p>Explainable heat-risk guidance for students and outdoor workers in Indore.</p>
+  <div class="card">
+    <label>Activity
+      <select id="activity">
+        <option value="commute">Commute</option>
+        <option value="walking">Walking</option>
+        <option value="outdoor_work">Outdoor work</option>
+        <option value="sports">Sports</option>
+      </select>
+    </label>
+    <label>Minutes outdoors
+      <input id="minutes" type="number" value="60" min="5" max="600">
+    </label>
+    <label><input id="vulnerable" type="checkbox"> I am more heat-sensitive</label>
+    <button id="check">Check my risk</button>
+  </div>
+  <div id="output" aria-live="polite"></div>
+  <script>
+    const offsets = { commute: 1, walking: 2, outdoor_work: 5, sports: 6 };
+    const factors = { commute: 1, walking: 0.8, outdoor_work: 0.5, sports: 0.4 };
+    const levels = ["Low", "Moderate", "High", "Extreme"];
+    const baseMinutes = [240, 120, 45, 15];
+    const actions = [
+      ["Carry water and sip regularly.", "Normal outdoor plans are fine."],
+      ["Drink water every 20-30 minutes.", "Take breaks in shade.", "Wear light, loose clothes and a cap."],
+      ["Move outdoor tasks to early morning or evening.", "Carry water and rest in shade every 30 minutes."],
+      ["Avoid outdoor activity if you can.", "Stop if dizzy, sick or confused and seek help."]
+    ];
+    function heatIndex(temp, humidity) {
+      const f = temp * 9 / 5 + 32;
+      const simple = 0.5 * (f + 61 + (f - 68) * 1.2 + humidity * 0.094);
+      if ((simple + f) / 2 < 80) return (simple - 32) * 5 / 9;
+      const hi = -42.379 + 2.04901523 * f + 10.14333127 * humidity -
+        0.22475541 * f * humidity - 0.00683783 * f * f -
+        0.05481717 * humidity * humidity + 0.00122874 * f * f * humidity +
+        0.00085282 * f * humidity * humidity - 0.00000199 * f * f * humidity * humidity;
+      return (hi - 32) * 5 / 9;
+    }
+    function assess(temp, humidity, activity, minutes, vulnerable) {
+      const hi = heatIndex(temp, humidity);
+      let adjusted = hi + offsets[activity];
+      if (minutes >= 240) adjusted += 2; else if (minutes >= 120) adjusted += 1;
+      if (new Date().getHours() >= 11 && new Date().getHours() < 16) adjusted += 1;
+      if (vulnerable) adjusted += 2;
+      const index = adjusted >= 51 ? 3 : adjusted >= 39 ? 2 : adjusted >= 32 ? 1 : 0;
+      return { index, hi, safe: Math.floor(baseMinutes[index] * factors[activity]) };
+    }
+    function render() {
+      const activity = document.getElementById("activity").value;
+      const minutes = Math.max(5, Math.min(600, Number(document.getElementById("minutes").value) || 60));
+      const result = assess(38, 55, activity, minutes, document.getElementById("vulnerable").checked);
+      const level = levels[result.index];
+      document.getElementById("output").innerHTML =
+        `<div class="card ${level}"><div class="level">${level} risk</div>
+        <p>Estimated heat index: <b>${result.hi.toFixed(1)}°C</b> at 38°C and 55% humidity.</p>
+        <ul>${actions[result.index].map(action => `<li>${action}</li>`).join("")}</ul>
+        <p>Suggested safe outdoor time: <b>about ${result.safe} minutes</b>.</p></div>
+        <div class="card"><b>Official warning:</b> Check IMD at mausam.imd.gov.in before going out.</div>
+        <small>Demo mode uses a transparent teaching heuristic. It is not medical advice or an IMD replacement.</small>`;
+    }
+    document.getElementById("check").addEventListener("click", render);
+    render();
+  </script>
+</body>
+</html>
