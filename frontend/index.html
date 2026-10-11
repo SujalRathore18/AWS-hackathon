@@ -3,100 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HeatShield AI - Indore</title>
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Explainable heat-risk guidance for Indore">
+  <title>HeatShield AI | Indore heat safety</title>
   <style>
-    :root { font-family: system-ui, sans-serif; color: #1f2937; background: #fff7ed; }
-    body { max-width: 620px; margin: auto; padding: 16px; }
-    .card { background: white; border: 3px solid #d1d5db; border-radius: 14px; padding: 16px; margin: 14px 0; }
-    .Low { border-color: #16a34a; } .Moderate { border-color: #eab308; }
-    .High { border-color: #ea580c; } .Extreme { border-color: #dc2626; }
-    label { display: block; margin: 14px 0; } select, input, button { font: inherit; padding: 9px; }
-    button { cursor: pointer; background: #111827; color: white; border: 0; border-radius: 8px; }
-    .level { font-size: 28px; font-weight: 700; } small { color: #6b7280; }
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e7eefb;background:#08111f;line-height:1.5}
+    *{box-sizing:border-box}body{margin:0;min-width:320px;background:radial-gradient(circle at 15% 0,#1e3a5f 0,transparent 34rem),#08111f}
+    a{color:#8dd7ff}.shell{width:min(1080px,calc(100% - 32px));margin:auto}
+    header{padding:28px 0 18px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}.logo{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ffb347,#ff5f6d);font-size:23px;box-shadow:0 8px 25px #ff704444}
+    .brand strong{display:block;font-size:18px;letter-spacing:.02em}.brand span{display:block;color:#9aabc2;font-size:12px}
+    .pill{border:1px solid #ffffff1c;background:#ffffff0b;border-radius:999px;padding:7px 11px;color:#b9c8dc;font-size:12px}
+    main{padding:24px 0 60px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center;padding:34px 0 30px}
+    .eyebrow{color:#8dd7ff;text-transform:uppercase;letter-spacing:.15em;font-size:11px;font-weight:800}.hero h1{font-size:clamp(36px,6vw,66px);line-height:1.02;letter-spacing:-.055em;margin:12px 0 18px;color:#fff}
+    .hero p{font-size:17px;color:#aebed2;max-width:580px;margin:0}.hero-art{min-height:240px;border:1px solid #ffffff16;border-radius:28px;background:linear-gradient(145deg,#142b48,#0d182a);display:grid;place-items:center;position:relative;overflow:hidden}
+    .sun{width:145px;height:145px;border-radius:50%;background:linear-gradient(145deg,#ffd166,#ff6b5b);box-shadow:0 0 80px #ff9e43aa}.hero-art:after{content:"";position:absolute;width:260px;height:90px;border:1px solid #ffffff18;border-radius:50%;transform:rotate(-18deg);bottom:20px}
+    .layout{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}.panel,.result{border:1px solid #ffffff16;background:#101c2eeb;border-radius:22px;box-shadow:0 15px 50px #00000025}
+    .panel{padding:24px}.panel h2,.result h2{font-size:18px;margin:0 0 5px;color:#fff}.muted{color:#91a4bd;font-size:13px;margin:0 0 22px}
+    label{display:block;color:#b9c8dc;font-size:13px;font-weight:700;margin:18px 0 8px}select,input[type=number]{width:100%;padding:13px 14px;border:1px solid #ffffff1c;border-radius:12px;background:#0a1525;color:#fff;font:inherit;outline:none}
+    select:focus,input:focus{border-color:#59c8ff;box-shadow:0 0 0 3px #59c8ff22}.check{display:flex;gap:10px;align-items:flex-start;color:#aebed2;font-size:13px;font-weight:500}.check input{width:18px;height:18px;accent-color:#5ecbff}
+    button{width:100%;margin-top:22px;border:0;border-radius:12px;padding:14px;background:linear-gradient(100deg,#48bfe9,#6c63ff);color:#fff;font:800 14px inherit;cursor:pointer;box-shadow:0 8px 24px #409fe955;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.1);transform:translateY(-1px)}button:disabled{opacity:.65;cursor:wait;transform:none}
+    .result{min-height:470px;padding:24px}.empty{min-height:420px;display:grid;place-items:center;text-align:center;color:#91a4bd}.empty-icon{font-size:48px;margin-bottom:10px}.empty h2{color:#fff;margin:0 0 6px}.empty p{max-width:330px;margin:0}
+    .topline{display:flex;justify-content:space-between;align-items:start;gap:15px}.status{font-size:11px;border-radius:999px;padding:6px 9px;background:#1b3550;color:#8dd7ff;white-space:nowrap}
+    .risk-card{border:1px solid #ffffff1b;border-radius:18px;padding:20px;margin-top:20px}.risk-card.Low{border-color:#43d17a}.risk-card.Moderate{border-color:#f4c95d}.risk-card.High{border-color:#ff9366}.risk-card.Extreme{border-color:#ff667b}
+    .risk-title{display:flex;align-items:center;gap:13px}.risk-dot{width:13px;height:13px;border-radius:50%;background:#43d17a;box-shadow:0 0 15px currentColor}.Moderate .risk-dot{background:#f4c95d}.High .risk-dot{background:#ff9366}.Extreme .risk-dot{background:#ff667b}.risk-title h3{font-size:30px;margin:0;color:#fff}.risk-sub{color:#aebed2;margin:3px 0 0;font-size:13px}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0}.metric{background:#ffffff08;border-radius:12px;padding:12px}.metric b{display:block;color:#fff;font-size:19px}.metric span{font-size:11px;color:#91a4bd}.section-title{color:#8dd7ff;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;margin:22px 0 9px}.why{color:#c4d1e2;font-size:14px;margin:0}.actions{display:grid;gap:8px;padding:0;margin:0;list-style:none}.actions li{background:#ffffff08;border-radius:10px;padding:10px 12px;color:#d5e0ef;font-size:13px}.actions li:before{content:"✓";color:#68d391;font-weight:800;margin-right:8px}.official{padding:13px;border-radius:12px;background:#17263a;color:#b9c8dc;font-size:13px}.official b{color:#ffd166}.footer{border-top:1px solid #ffffff12;padding:20px 0;color:#71849d;font-size:12px}.footer strong{color:#b9c8dc}
+    @media(max-width:760px){header{padding-top:18px}.pill{display:none}.hero{grid-template-columns:1fr;padding-top:22px}.hero-art{display:none}.layout{grid-template-columns:1fr}.result{min-height:390px}.empty{min-height:260px}}
   </style>
 </head>
 <body>
-  <h1>HeatShield AI</h1>
-  <p>Explainable heat-risk guidance for students and outdoor workers in Indore.</p>
-  <div class="card">
-    <label>Activity
-      <select id="activity">
-        <option value="commute">Commute</option>
-        <option value="walking">Walking</option>
-        <option value="outdoor_work">Outdoor work</option>
-        <option value="sports">Sports</option>
-      </select>
-    </label>
-    <label>Minutes outdoors
-      <input id="minutes" type="number" value="60" min="5" max="600">
-    </label>
-    <label><input id="vulnerable" type="checkbox"> I am more heat-sensitive</label>
-    <button id="check">Check my risk</button>
-  </div>
-  <div id="output" aria-live="polite"></div>
+  <header class="shell">
+    <a class="brand" href="./"><span class="logo">☀</span><span><strong>HeatShield AI</strong><span>Indore heat safety</span></span></a>
+    <span class="pill">Awareness tool · Not medical advice</span>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <div><div class="eyebrow">Make a safer plan</div><h1>Know the heat<br><span style="color:#ffb347">before you go.</span></h1><p>Turn weather into simple, practical guidance for your commute, workout, or outdoor shift.</p></div>
+      <div class="hero-art" aria-hidden="true"><div class="sun"></div></div>
+    </section>
+    <section class="layout">
+      <form class="panel" id="form">
+        <h2>Your plan</h2><p class="muted">Tell us what you are planning outdoors.</p>
+        <label for="activity">Activity</label>
+        <select id="activity"><option value="commute">Commute</option><option value="walking">Walking</option><option value="outdoor_work">Outdoor work</option><option value="sports">Sports or exercise</option></select>
+        <label for="minutes">Time outdoors</label><input id="minutes" type="number" value="60" min="5" max="600" inputmode="numeric">
+        <label class="check"><input id="vulnerable" type="checkbox"><span>I may be more heat-sensitive<br><small>For example, due to age or health</small></span></label>
+        <button id="check" type="submit">Check my heat risk <span aria-hidden="true">→</span></button>
+      </form>
+      <section class="result" id="output" aria-live="polite"><div class="empty"><div><div class="empty-icon">🌡️</div><h2>Your guidance will appear here</h2><p>Choose an activity and duration to get a clear, explainable recommendation.</p></div></div></section>
+    </section>
+  </main>
+  <footer class="shell footer"><strong>HeatShield AI</strong> · Weather from Open-Meteo · Always check <a href="https://mausam.imd.gov.in/" target="_blank" rel="noreferrer">official IMD warnings</a>.<br>This prototype is not clinically validated and does not replace medical advice or emergency services.</footer>
   <script>
-    function renderResult(data, demoMode = false) {
-      const output = document.getElementById("output");
-      output.innerHTML = `<div class="card ${data.level}"><div class="level">${data.level} risk</div>
-        <p>${data.why.join(" ")}</p><ul>${data.actions.map(action => `<li>${action}</li>`).join("")}</ul>
-        <p>Suggested safe outdoor time: <b>about ${data.safe_minutes} minutes</b>.</p></div>
-        <div class="card"><b>Now:</b> ${data.temp_c}°C, ${data.humidity}% humidity,
-        feels like ${data.apparent_c}°C. <b>Best hours:</b> ${data.best_hours.join(", ") || "none"}.</div>
-        <div class="card"><b>Official warning:</b> ${data.official_alert}</div>
-        <small>${demoMode ? "GitHub Pages demo mode. " : ""}Source: ${data.source}. Updated ${data.updated}. ${data.disclaimer}</small>`;
-    }
-    function demoData(activity, minutes, vulnerable) {
-      const offsets = { commute: 1, walking: 2, outdoor_work: 5, sports: 6 };
-      const factors = { commute: 1, walking: 0.8, outdoor_work: 0.5, sports: 0.4 };
-      const levels = ["Low", "Moderate", "High", "Extreme"];
-      const actions = [
-        ["Carry water and sip regularly.", "Normal outdoor plans are fine."],
-        ["Drink water every 20-30 minutes.", "Take breaks in shade.", "Wear light, loose clothes and a cap."],
-        ["Move outdoor tasks to early morning or evening.", "Carry water and rest in shade every 30 minutes."],
-        ["Avoid outdoor activity if you can.", "Stop if dizzy, sick or confused and seek help."]
-      ];
-      const temp = 38;
-      const humidity = 55;
-      const heatIndex = 52.1;
-      let adjusted = heatIndex + offsets[activity];
-      if (minutes >= 240) adjusted += 2; else if (minutes >= 120) adjusted += 1;
-      if (new Date().getHours() >= 11 && new Date().getHours() < 16) adjusted += 1;
-      if (vulnerable) adjusted += 2;
-      const index = adjusted >= 51 ? 3 : adjusted >= 39 ? 2 : adjusted >= 32 ? 1 : 0;
-      return {
-        level: levels[index],
-        why: [`Heat index is ${heatIndex}C (${temp}C at ${humidity}% humidity).`,
-          `${activity.replace("_", " ").replace(/\b\w/g, letter => letter.toUpperCase())} adds +${offsets[activity]}C of effort.`,
-          "GitHub Pages is showing a deterministic demo reading."],
-        actions: actions[index],
-        safe_minutes: Math.floor([240, 120, 45, 15][index] * factors[activity]),
-        temp_c: temp,
-        humidity,
-        apparent_c: 42,
-        best_hours: ["07:00", "08:00"],
-        official_alert: "Always check IMD (mausam.imd.gov.in) for official warnings.",
-        source: "HeatShield risk model",
-        updated: new Date().toISOString(),
-        disclaimer: "Awareness tool only. Not medical advice and not a substitute for official IMD warnings."
-      };
-    }
-    async function render() {
-      const activity = document.getElementById("activity").value;
-      const minutes = Math.max(5, Math.min(600, Number(document.getElementById("minutes").value) || 60));
-      const vulnerable = document.getElementById("vulnerable").checked ? "1" : "0";
-      const output = document.getElementById("output");
-      output.textContent = "Loading live weather...";
-      try {
-        const response = await fetch(`/risk?activity=${encodeURIComponent(activity)}&minutes=${minutes}&vulnerable=${vulnerable}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Request failed");
-        renderResult(data);
-      } catch (error) {
-        renderResult(demoData(activity, minutes, vulnerable === "1"), true);
-      }
-    }
-    document.getElementById("check").addEventListener("click", render);
-    render();
+    const form=document.getElementById("form"),output=document.getElementById("output"),button=document.getElementById("check");
+    function demoData(activity,minutes,vulnerable){const off={commute:1,walking:2,outdoor_work:5,sports:6},factor={commute:1,walking:.8,outdoor_work:.5,sports:.4},levels=["Low","Moderate","High","Extreme"],acts=[["Carry water and sip regularly.","Normal outdoor plans are fine."],["Drink water every 20–30 minutes.","Take breaks in shade.","Wear light, loose clothes and a cap."],["Move outdoor tasks to early morning or evening.","Carry water and rest in shade every 30 minutes."],["Avoid outdoor activity if you can.","Stop if dizzy, sick or confused and seek help."]];let adjusted=52.1+off[activity];if(minutes>=240)adjusted+=2;else if(minutes>=120)adjusted+=1;if(new Date().getHours()>=11&&new Date().getHours()<16)adjusted+=1;if(vulnerable)adjusted+=2;const i=adjusted>=51?3:adjusted>=39?2:adjusted>=32?1:0;return{level:levels[i],why:[`Heat index is 52.1°C (38°C at 55% humidity).`,`Your ${activity.replace("_"," ")} adds +${off[activity]}°C of effort.`,"GitHub Pages demo mode is using a representative reading."],actions:acts[i],safe_minutes:Math.floor([240,120,45,15][i]*factor[activity]),temp_c:38,humidity:55,apparent_c:42,best_hours:["07:00","08:00"],official_alert:"Always check IMD for official warnings before going out.",source:"HeatShield risk model",updated:new Date().toLocaleString(),disclaimer:"Awareness tool only. Not medical advice."}}
+    function render(d,demo){const level=d.level;output.innerHTML=`<div class="topline"><div><div class="eyebrow">Your heat check</div><h2>Recommended plan</h2></div><span class="status">${demo?"Demo mode":"Live weather"}</span></div><div class="risk-card ${level}"><div class="risk-title"><span class="risk-dot"></span><div><h3>${level} risk</h3><p class="risk-sub">For your selected plan right now</p></div></div><div class="metrics"><div class="metric"><b>${d.temp_c}°C</b><span>Temperature</span></div><div class="metric"><b>${d.heat_index_c||"52.1"}°C</b><span>Heat index</span></div><div class="metric"><b>${d.safe_minutes} min</b><span>Safe-time guide</span></div></div><div class="section-title">Why this level</div><p class="why">${d.why.join(" ")}</p><div class="section-title">What to do</div><ul class="actions">${d.actions.map(x=>`<li>${x}</li>`).join("")}</ul><div class="section-title">Official guidance</div><div class="official"><b>IMD:</b> ${d.official_alert}</div><div class="section-title">Better hours</div><p class="why">${d.best_hours?.join(" · ")||"Check again later for a forecast."}</p></div><small style="display:block;margin-top:14px;color:#71849d">Source: ${d.source} · Updated ${d.updated} · ${d.disclaimer}</small>`}
+    async function check(){const activity=document.getElementById("activity").value,minutes=Math.max(5,Math.min(600,Number(document.getElementById("minutes").value)||60)),vulnerable=document.getElementById("vulnerable").checked;button.disabled=true;button.textContent="Checking…";try{const r=await fetch(`/risk?activity=${encodeURIComponent(activity)}&minutes=${minutes}&vulnerable=${vulnerable?1:0}`);if(!r.ok)throw new Error("API unavailable");render(await r.json(),false)}catch(e){render(demoData(activity,minutes,vulnerable),true)}finally{button.disabled=false;button.innerHTML='Check my heat risk <span aria-hidden="true">→</span>'}}
+    form.addEventListener("submit",e=>{e.preventDefault();check()});
   </script>
 </body>
 </html>
