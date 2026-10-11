@@ -50,3 +50,25 @@ The AWS deployment is not verified in the current account. Previous deployment a
 4. Tighten local/Lambda input validation and safe error responses.
 5. Fix explicit timezone use and add focused tests for new contracts.
 6. Update documentation and run the targeted test, SAM, and browser validation commands available in the environment.
+
+## Post-fix verification
+
+The prioritized fixes were implemented in commit `e00706d`:
+
+- Frontend sample cards and visualizations are labelled illustrative.
+- GitHub Pages exposes four selectable DEMO scenarios and does not call demo values live.
+- Local API responses show LIVE state, retrieval time, and model limitations; invalid input returns HTTP 400.
+- Live request failures render an ERROR state instead of silently substituting sample data.
+- Risk output calls the exposure number a conservative planning limit.
+- Local calculations use the explicit Asia/Kolkata timezone.
+- Status updates use screen-reader-friendly live regions and reduced-motion CSS.
+
+Verification completed:
+
+- `python -m pytest tests -q`: 8 passed.
+- `python -m py_compile src\risk.py src\get_risk.py src\fetch_weather.py local_server.py`: passed.
+- Local browser flow on port 8081: LIVE API response rendered with timestamp and model note.
+- Invalid local request: `/risk?activity=bad&minutes=60` returned HTTP 400.
+- Public GitHub Pages flow: Cool sample rendered as `DEMO · sample data` and explicitly stated that it was not a current observation.
+- GitHub Pages workflow run for `e00706d`: successful.
+- `sam validate --lint`: unavailable in the final shell because `sam` was not on PATH; prior repository validation/build remains documented, and AWS deployment remains blocked by the Organizations policy.
